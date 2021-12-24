@@ -1,32 +1,37 @@
+import React from "react";
 import Card from "./components/ui/Card";
 import Header from "./components/Header";
-import Params from "./components/Params";
+import InputForm from "./components/InputForm";
 import Brew from "./components/Brew";
-import { useState } from "react";
 
-function App() {
-  const [cups, setCups] = useState(0);
-  const [ratio, setRatio] = useState(0);
+class App extends React.Component {
+  state = {
+    size: 0,
+    cups: 0,
+    ratio: 0,
+  };
 
-  {
-    /* Updates the brew states so that it can be passed to the Brew component. */
+  setParams = (name, value) => {
+    this.setState({ [name]: value }, () => {});
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <Header />
+        <Card>
+          <InputForm onParamChange={this.setParams} />
+        </Card>
+        {this.state.size > 0 && this.state.cups > 0 && this.state.ratio > 0 ? (
+          <Card>
+            <Brew state={this.state} />
+          </Card>
+        ) : (
+          ""
+        )}
+      </div>
+    );
   }
-  function createBrew(props) {
-    setCups(props.cups);
-    setRatio(props.ratio);
-  }
-
-  return (
-    <div className="App">
-      <Header />
-      <Card>
-        <Params createBrew={createBrew} />
-      </Card>
-      <Card>
-        <Brew cups={cups} ratio={ratio} />
-      </Card>
-    </div>
-  );
 }
 
 export default App;
