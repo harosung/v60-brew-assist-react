@@ -1,0 +1,33 @@
+header {
+    background-color: white;
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: -5px 5px 8px rgba(0, 0, 0, 0.2);
+    margin: 10px 60px; 
+    padding: 20px; 
+}
+
+.button-method {
+    border:0.16em solid #000000;
+    padding: 0.5em 2.5em; 
+    margin: 0 0.3em; 
+    text-transform: uppercase;
+    text-align: center;
+    
+}
+
+.button-method-active {
+    background-color: rgb(255, 24, 24);
+}
+
+.button-method-inactive {
+    /* background-color: rgb(255, 255, 255);  */
+}
+
+.button-method:hover{
+    background-color: rgb(255, 75, 75);
+    border-color: rgb(25, 25, 25);;
+}
