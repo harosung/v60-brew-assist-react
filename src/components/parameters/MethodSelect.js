@@ -1,13 +1,38 @@
 import styles from "../Styles.css";
 import { useState } from "react";
+import { useEffect } from "react/cjs/react.development";
 
 {
   /* Creates the buttons for method selection and contains all method details*/
 }
-function MethodSelect({ params, methodsList, onMethodSelect }) {
+function MethodSelect({
+  method,
+  setMethod,
+  params,
+  setParams,
+  useDefault,
+  setUseDefault,
+  // setDataRefresh,
+}) {
   // State of the selected method
   const [isActive, setIsActive] = useState("");
-
+  // List of method buttons to display
+  const methodsList = ["Hario", "Hoffman", "Kasuya", "Rao"];
+  // Default Hario method parameters
+  const harioParams = { grounds: 12, water: 120, ratio: 12 };
+  // Default Hoffman method parameters
+  const hoffmanParams = { grounds: 30, water: 500, ratio: 16.7 };
+  // Default Kasuya method parameters
+  const kasuyaParams = { grounds: 20, water: 300, ratio: 15 };
+  // Default Rao method parameters
+  const raoParams = { grounds: 22, water: 360, ratio: 16.4 };
+  // Hario method data to be shown in the method steps
+  const harioRecipe = [
+    "Fold filter paper and place on dripper, before rinsing and warming with boiling water.",
+    `Pour in ${params.grounds}g of coffee, shaking the V60 lightly to level the grounds.`,
+    "Pour boiling water from the centre of the grounds, spiralling outwards. Let it pre-wet for 30s",
+    "Pour the rest of the brew with the same spiral motion, taking special care to avoid pouring on the filter paper itself.",
+  ];
   // Hoffman method data to be shown in the method steps
   const hoffmanRecipe = [
     "Rinse filter and pre-heat V60",
@@ -22,6 +47,7 @@ function MethodSelect({ params, methodsList, onMethodSelect }) {
     "Gently swirl brewer to flatten coffee bed for even extraction",
     "Aim to finish drawdown by 3min 30s",
   ];
+
   // Kasuya method data to be shown in the method steps
   const kasuyaRecipe = [
     "Rinse filter & pre-heat V60",
@@ -47,6 +73,20 @@ function MethodSelect({ params, methodsList, onMethodSelect }) {
     "Gently stir to stop grounds from clinging to sides",
     "At 1min 45s, swirl V60 to flatten coffee bed for even brew",
     "Drawdown should be complete within 3 minutes.",
+  ];
+
+  // Hario method data to be shown in the timer step
+  const harioSteps = [
+    [
+      "-1",
+      "Fold filter paper and place on dripper, before rinsing and warming with boiling water.",
+    ],
+    ["0", `Pour in ${params.grounds * 2}g of coffee.`],
+    ["0.1", "Sshaking the V60 lightly to level the grounds"],
+    [
+      "30",
+      `Pour remaining ${params.water}g of water with the same spiral motion, taking special care to avoid pouring on the filter paper itself`,
+    ],
   ];
 
   // Hoffman method data to be shown in the timer step
@@ -94,35 +134,68 @@ function MethodSelect({ params, methodsList, onMethodSelect }) {
 
   // Method object to be sent to App
   const METHODS = {
+    Hario: {
+      name: "Hario",
+      params: harioParams,
+      recipe: harioRecipe,
+      steps: harioSteps,
+    },
     Hoffman: {
-      grounds: 30,
-      water: 500,
-      ratio: 16.7,
+      name: "Hoffman",
+      params: hoffmanParams,
       recipe: hoffmanRecipe,
       steps: hoffmanSteps,
     },
     Kasuya: {
-      grounds: 20,
-      water: 300,
-      ratio: 15,
+      name: "Kasuya",
+      params: kasuyaParams,
       recipe: kasuyaRecipe,
       steps: kasuyaSteps,
     },
     Rao: {
-      grounds: 22,
-      water: 360,
-      ratio: 16.4,
+      name: "Rao",
+      params: raoParams,
       recipe: raoRecipe,
       steps: raoSteps,
     },
   };
 
-  // Returns the data object for the selected method
+  // Returns the method instructions (recipe and steps)
+  function getMethodData() {
+    let newMethod = { ...method };
+    newMethod.recipe = METHODS[isActive].recipe;
+    newMethod.steps = METHODS[isActive].steps;
+    return newMethod;
+  }
+  // Returns the default method parameters
+  function getParamDefaults() {
+    let newParams = {
+      grounds: METHODS[isActive].params.grounds,
+      water: METHODS[isActive].params.water,
+      ratio: METHODS[isActive].params.ratio,
+    };
+    return newParams;
+  }
+
+  // On button click, the selected method will be set as the active method
   const toggleButton = (event) => {
-    event.preventDefault();
-    setIsActive(event.target.id);
-    onMethodSelect(event.target.id, METHODS[event.target.id]);
+    if (event.target.id !== isActive) {
+      event.preventDefault();
+      setIsActive(event.target.id);
+      setParams(METHODS[event.target.id].params);
+      setMethod(METHODS[event.target.id]);
+    }
   };
+  // On params state changes, update the method data
+  useEffect(() => {
+    if (useDefault) {
+      setParams(getParamDefaults);
+      setUseDefault(false);
+    }
+    if (isActive !== "") {
+      setMethod(getMethodData);
+    }
+  }, [params]);
 
   // Creates the grouping of button elements
   const buttonGroup = methodsList.map((value, i) => (
@@ -138,7 +211,6 @@ function MethodSelect({ params, methodsList, onMethodSelect }) {
       {value}
     </button>
   ));
-
   return <div>{buttonGroup}</div>;
 }
 export default MethodSelect;

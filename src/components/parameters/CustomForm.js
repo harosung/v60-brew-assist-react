@@ -3,14 +3,15 @@ import { React, useState } from "react";
 {
   /* Custom parameters can be set/reset to default in this controlled form */
 }
-function CustomForm({ params, defaultParams, onFormSubmit }) {
-  // State of the params in the controlled form
+function CustomForm({ params, onFormSubmit }) {
+  // State of the method in the controlled form
   const [newParams, setNewParams] = useState({
     grounds: params.grounds,
     water: params.water,
+    ratio: params.grounds / params.water
   });
 
-  // Updates the params for the controlled form
+  // Updates the method for the controlled form
   const handleInputChange = (event) => {
     setNewParams((prevParams) => {
       return { ...prevParams, [event.target.id]: event.target.value };
@@ -19,16 +20,12 @@ function CustomForm({ params, defaultParams, onFormSubmit }) {
 
   // Sends the form inputs or default parameters based on the button clicked
   const handleFormButton = (event) => {
-    if (event.target.id === "save") {
-      onFormSubmit(newParams);
-    } else {
-      onFormSubmit(defaultParams);
-    }
-  };
+     onFormSubmit(newParams, event.target.id);
+    } 
 
   return (
     <>
-      <form className="params">
+      <form className="method">
         <div>
           <label>Grounds</label>
           <input
